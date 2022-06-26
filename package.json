@@ -62,6 +62,7 @@
     "@rollup/plugin-virtual": "^2.1.0",
     "acorn": "^8.7.1",
     "acorn-walk": "^8.2.0",
+    "builtin-modules": "^3.3.0",
     "esbuild-wasm": "^0.14.47",
     "rollup": "^2.75.7",
     "rollup-plugin-typescript2": "^0.32.1",

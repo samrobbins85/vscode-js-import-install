@@ -1,38 +1,71 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 const vscode = require("vscode");
-var babel = require("@babel/core");
 const editor = vscode.window.activeTextEditor;
-const commonjs = require("@babel/plugin-transform-modules-commonjs");
-// const typescript = require("@babel/plugin-transform-typescript");
 const acorn = require("acorn");
 const walk = require("acorn-walk");
+const builtinModules = require("builtin-modules");
 import { rollup } from "rollup";
 import virtual from "@rollup/plugin-virtual";
+
+async function getPackageManager() {
+  let packageManager = "npm";
+  const dir = await vscode.workspace.fs.readDirectory(
+    vscode.workspace.workspaceFolders[0].uri
+  );
+  const entries = dir.map((item) => item[0]);
+  if (entries.includes("yarn.lock")) {
+    packageManager = "yarn";
+  }
+  return packageManager;
+}
+// Uses rollup to generate consistent importing to make it simpler to parse
+async function roll(text) {
+  const out = await rollup({
+    input: "entry",
+    plugins: [virtual({ entry: text })],
+  });
+  const gen = await out.generate({ format: "cjs" });
+  return gen.output[0].code;
+}
+
+async function getCurrentDependencies() {
+  const doc = await vscode.workspace.openTextDocument(
+    vscode.workspace.workspaceFolders[0].uri.path + "/package.json"
+  );
+  const json = JSON.parse(doc.getText());
+  return [
+    ...Object.keys(json.dependencies),
+    ...Object.keys(json.devDependencies),
+  ];
+}
+
 async function getInstall() {
   const text = editor.document.getText(editor.selection);
   const deps = [];
   try {
-    const out = await rollup({
-      input: "entry",
-      plugins: [virtual({ entry: text })],
-    });
-    const gen = await out.generate({ format: "cjs" });
-    const result = gen.output[0].code;
-    console.log(acorn.parse(result));
-    walk.simple(acorn.parse(result), {
+    const result = await roll(text);
+    // Use acorn to find all requires and find what they're requiring
+    walk.simple(acorn.parse(result, { ecmaVersion: 2020 }), {
       CallExpression(node) {
         if (node.callee.name === "require") {
           deps.push(node.arguments[0].value);
         }
       },
     });
-    console.log(result.code);
+    const currentDependencies = await getCurrentDependencies();
+    const toInstall = deps.filter(
+      (item) =>
+        !currentDependencies.includes(item) && !builtinModules.includes(item)
+    );
+    const packageManager = await getPackageManager();
+    const terminal = vscode.window.createTerminal("Package Installer");
+    terminal.sendText(`${packageManager} install ${toInstall.join(" ")}`);
+    vscode.window.showInformationMessage(`Installing ${toInstall.join(" ,")}`);
   } catch (error) {
     console.log("ERROR");
     console.error(error);
   }
-  vscode.window.showInformationMessage(deps.toString());
 }
 
 // this method is called when your extension is activated
@@ -50,25 +83,19 @@ function activate(context) {
   // The commandId parameter must match the command field in package.json
   let disposable = vscode.commands.registerCommand(
     "vscode-js-import-install.helloWorld",
-    function () {
+    async function () {
       // The code you place here will be executed every time your command is executed
 
       // Display a message box to the user
       vscode.window.showInformationMessage(
         "Hello World from vscode-js-import-install!"
       );
-      try {
-        const terminal = vscode.window.createTerminal("Created Terminal");
-        terminal.sendText("touch leavemehere.txt");
-      } catch (error) {
-        console.log(error);
-      }
     }
   );
 
   let importInstall = vscode.commands.registerCommand(
     "vscode-js-import-install.install",
-    function () {
+    async function () {
       getInstall();
     }
   );
