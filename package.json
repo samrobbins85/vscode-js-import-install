@@ -1,0 +1,70 @@
+{
+  "name": "vscode-js-import-install",
+  "displayName": "vscode-js-import-install",
+  "description": "Select JS imports and get the option to install them",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.68.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:vscode-js-import-install.helloWorld",
+    "onCommand:vscode-js-import-install.install"
+  ],
+  "main": "./out/main.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "vscode-js-import-install.helloWorld",
+        "title": "Hello World"
+      },
+      {
+        "command": "vscode-js-import-install.install",
+        "title": "Install Packages"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "vscode-js-import-install.install",
+          "group": "z_commands"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "pretest": "yarn run lint",
+    "test": "node ./test/runTest.js",
+    "esbuild-base": "esbuild ./extension.js --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node",
+    "esbuild": "yarn run esbuild-base -- --sourcemap",
+    "esbuild-watch": "yarn run esbuild-base -- --sourcemap --watch"
+  },
+  "devDependencies": {
+    "@rollup/plugin-typescript": "^8.3.3",
+    "@types/glob": "^7.2.0",
+    "@types/mocha": "^9.1.1",
+    "@types/node": "16.x",
+    "@types/vscode": "^1.68.0",
+    "@vscode/test-electron": "^2.1.3",
+    "esbuild": "^0.14.47",
+    "eslint": "^8.16.0",
+    "glob": "^8.0.3",
+    "mocha": "^10.0.0",
+    "typescript": "^4.7.4"
+  },
+  "dependencies": {
+    "@babel/core": "^7.18.5",
+    "@babel/plugin-transform-modules-commonjs": "^7.18.2",
+    "@babel/plugin-transform-typescript": "^7.18.4",
+    "@rollup/plugin-virtual": "^2.1.0",
+    "acorn": "^8.7.1",
+    "acorn-walk": "^8.2.0",
+    "esbuild-wasm": "^0.14.47",
+    "rollup": "^2.75.7",
+    "rollup-plugin-typescript2": "^0.32.1",
+    "tslib": "^2.4.0"
+  }
+}
