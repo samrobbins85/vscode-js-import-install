@@ -1,7 +1,4 @@
 on:
-  push:
-    branches:
-      - main
   release:
     types:
       - created
@@ -18,7 +15,6 @@ jobs:
           node-version: 14.x
       - run: yarn
       - name: Publish
-        if: startsWith(github.ref, 'refs/tags/')
         run: yarn run deploy
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
