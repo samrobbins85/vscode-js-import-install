@@ -2,7 +2,11 @@
   "name": "vscode-js-import-install",
   "displayName": "vscode-js-import-install",
   "description": "Select JS imports and get the option to install them",
-  "version": "0.0.1",
+  "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/samrobbins85/vscode-js-import-install"
+  },
   "engines": {
     "vscode": "^1.68.0"
   },
@@ -10,16 +14,11 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:vscode-js-import-install.helloWorld",
     "onCommand:vscode-js-import-install.install"
   ],
   "main": "./out/main.js",
   "contributes": {
     "commands": [
-      {
-        "command": "vscode-js-import-install.helloWorld",
-        "title": "Hello World"
-      },
       {
         "command": "vscode-js-import-install.install",
         "title": "Install Packages"
@@ -37,7 +36,6 @@
   "scripts": {
     "lint": "eslint .",
     "pretest": "yarn run lint",
-    "test": "node ./test/runTest.js",
     "esbuild-base": "esbuild ./extension.js --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node",
     "esbuild": "yarn run esbuild-base -- --sourcemap",
     "esbuild-watch": "yarn run esbuild-base -- --sourcemap --watch"
