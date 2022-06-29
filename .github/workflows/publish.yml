@@ -1,17 +1,11 @@
 on:
-  push:
-    branches:
-      - main
   release:
     types:
       - created
 
 jobs:
   build:
-    strategy:
-      matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -19,9 +13,11 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: 14.x
+      - name: Install vsce
+        run: npm install -g vsce
       - run: yarn
       - name: Publish
-        if: startsWith(github.ref, 'refs/tags/') && matrix.os == 'ubuntu-latest'
+        if: startsWith(github.ref, 'refs/tags/')
         run: yarn run deploy
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
