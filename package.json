@@ -1,5 +1,6 @@
 {
   "name": "vscode-js-import-install",
+  "publisher": "SamRobbins",
   "displayName": "vscode-js-import-install",
   "description": "Select JS imports and get the option to install them",
   "version": "1.0.0",
@@ -7,6 +8,7 @@
     "type": "git",
     "url": "https://github.com/samrobbins85/vscode-js-import-install"
   },
+  "license": "MIT",
   "engines": {
     "vscode": "^1.68.0"
   },
@@ -36,7 +38,9 @@
   "scripts": {
     "lint": "eslint .",
     "pretest": "yarn run lint",
-    "esbuild-base": "esbuild ./extension.js --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node",
+    "package": "vsce package",
+    "vscode:prepublish": "yarn run esbuild-base --minify",
+    "esbuild-base": "esbuild ./extension.js --bundle --outfile=out/main.js --external:vscode --external:fsevents --format=cjs --platform=node",
     "esbuild": "yarn run esbuild-base -- --sourcemap",
     "esbuild-watch": "yarn run esbuild-base -- --sourcemap --watch"
   },
