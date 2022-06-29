@@ -3,7 +3,7 @@
   "publisher": "SamRobbins",
   "displayName": "vscode-js-import-install",
   "description": "Select JS imports and get the option to install them",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/samrobbins85/vscode-js-import-install"
@@ -42,7 +42,8 @@
     "vscode:prepublish": "yarn run esbuild-base --minify",
     "esbuild-base": "esbuild ./extension.js --bundle --outfile=out/main.js --external:vscode --external:fsevents --format=cjs --platform=node",
     "esbuild": "yarn run esbuild-base -- --sourcemap",
-    "esbuild-watch": "yarn run esbuild-base -- --sourcemap --watch"
+    "esbuild-watch": "yarn run esbuild-base -- --sourcemap --watch",
+    "publish": "vsce publish"
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^8.3.3",

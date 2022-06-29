@@ -60,7 +60,11 @@ async function getInstall() {
     );
     const packageManager = await getPackageManager();
     const terminal = vscode.window.createTerminal("Package Installer");
-    terminal.sendText(`${packageManager} install ${toInstall.join(" ")}`);
+    terminal.sendText(
+      `${packageManager} ${
+        packageManager === "npm" ? "install" : "add"
+      } ${toInstall.join(" ")}`
+    );
     vscode.window.showInformationMessage(`Installing ${toInstall.join(" ,")}`);
   } catch (error) {
     console.log("ERROR");
